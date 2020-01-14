@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:background="@drawable/paisaje">
+
+
+    <TextView
+        android:id="@+id/agenda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AGENDA"
+        android:textAppearance="@style/ThemeOverlay.AppCompat.Dark"
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:textColor="@android:color/holo_orange_light"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"/>
+
+
+</FrameLayout>

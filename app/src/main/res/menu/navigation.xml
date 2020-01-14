@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/Todos"
+            android:checked="true"
+            android:icon="@drawable/ic_todos"
+            android:title="Todos"/>
+
+        <item
+            android:id="@+id/Familia"
+            android:icon="@drawable/ic_familia"
+            android:title="Familia"/>
+        <item
+            android:id="@+id/Trabajo"
+            android:icon="@drawable/ic_trabajo"
+            android:title="Trabajo"/>
+        <item
+            android:id="@+id/Amigos"
+            android:icon="@drawable/ic_amigos"
+            android:title="Amigos"/>
+    </group>
+
+</menu>

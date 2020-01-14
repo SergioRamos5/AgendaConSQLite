@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/takePhoto"
+        android:title="Hacer Foto"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/openGalery"
+        android:title="Abrir Galeria"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/deletePhoto"
+        android:title="Borrar Foto"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/cancel"
+        android:title="Cancelar"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+
+</menu>
