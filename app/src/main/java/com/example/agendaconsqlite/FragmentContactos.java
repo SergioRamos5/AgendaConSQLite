@@ -1,16 +1,19 @@
 package com.example.agendaconsqlite;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +39,8 @@ public class FragmentContactos extends Fragment {
     String[] from;
     int [] to;
     Datos datos;
+    private onSelectedItemListener listener;
+
 
     @Nullable
     @Override
@@ -52,7 +57,10 @@ public class FragmentContactos extends Fragment {
         {
             recyclerView = v.findViewById(R.id.recycler);
             Cursor c = sqLiteDatabase.rawQuery("select * from Contactos", null);
-            mAdapter = new MiRecyclerAdapter(R.layout.holder, c, from, to);
+            if (Utilidades.visualizacion == Utilidades.LISTA)
+                mAdapter = new MiRecyclerAdapter(R.layout.holder, c, from, to);
+            else
+                mAdapter = new MiRecyclerAdapter(R.layout.holder_parrilla, c, from, to);
 
             //region  LONG CLICK
             mAdapter.setLongListener(new View.OnLongClickListener() {
@@ -139,17 +147,57 @@ public class FragmentContactos extends Fragment {
                         }
                     }else
                     {
-
+                        pos = recyclerView.getChildAdapterPosition(view);
+                        datos = mAdapter.getItem(pos);
+                        listener.onItemSelected(datos);
                     }
                 }
             });
+            //endregion
+
+            //region IMAGEN
+            mAdapter.ClickImagen(new OnClickImagen() {
+                @Override
+                public void onClickImagen(View v) {
+
+                    PopupMenu popupMenu = new PopupMenu(getContext(), v);
+                    popupMenu.getMenuInflater().inflate(R.menu.menu_contextual, popupMenu.getMenu());
+
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+
+                            switch (item.getItemId())
+                            {
+                                case R.id.takePhoto:
+                                    Intent intento = new Intent("android.media.action.IMAGE_CAPTURE");
+                                    startActivityForResult(intento,1);
+                                    break;
+                                case R.id.openGalery:
+                                    Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                                    startActivityForResult(gallery, 2);
+                                    break;
+                                case R.id.deletePhoto:
+                                    datos.setImagen(null);
+                                    actualizar();
+                                    break;
+                                case R.id.cancel:
+                                    break;
+                            }
+                            return true;
+                        }
+                    });
+                    popupMenu.show();
+                }
+            });
+
             //endregion
 
             recyclerView.setAdapter(mAdapter);
             if (Utilidades.visualizacion == Utilidades.LISTA)
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
             else
-                recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
 
             //region FAB
             fab = v.findViewById(R.id.fab);
@@ -175,4 +223,9 @@ public class FragmentContactos extends Fragment {
         mAdapter = new MiRecyclerAdapter(R.layout.holder, c, from, to);
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        listener = (onSelectedItemListener) context;
+    }
 }

@@ -15,10 +15,11 @@ public class MiRecyclerAdapter extends CursorRecyclerAdapterAbs implements View.
     private int mLayout;
     private int[] mFrom;
     private int[] mTo;
-    View.OnClickListener listener;
-    View.OnLongClickListener longListener;
-    View.OnTouchListener listenerTouch;
-
+    private View.OnClickListener listener;
+    private View.OnLongClickListener longListener;
+    private View.OnTouchListener listenerTouch;
+    private View view;
+    private OnClickImagen listenerImagen;
 
     public MiRecyclerAdapter(int layout, Cursor cursor, String[] from, int[] to) {
         super(cursor);
@@ -30,21 +31,41 @@ public class MiRecyclerAdapter extends CursorRecyclerAdapterAbs implements View.
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(mLayout, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(mLayout, parent, false);
+
+        SimpleViewHolder holder = new SimpleViewHolder(view, mTo);
+
         view.setOnClickListener(this);
         view.setOnLongClickListener(this);
         view.setOnTouchListener(this);
-        return new SimpleViewHolder(view, mTo);
+        holder.ClickImagen(new OnClickImagen() {
+            @Override
+            public void onClickImagen(View v) {
+                listenerImagen.onClickImagen(view);
+            }
+        });
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, Cursor cursor) {
-        ((SimpleViewHolder) holder).bind(0, cursor.getString(mFrom[0]));
-        ((SimpleViewHolder) holder).bind(1, cursor.getString(mFrom[1]));
-        ((SimpleViewHolder) holder).bind(2, cursor.getString(mFrom[2]));
-        ((SimpleViewHolder) holder).bind(3, cursor.getString(mFrom[3]));
-        Bitmap theImage = MainActivity.convertirStringBitmap(cursor.getString(mFrom[4]));
-        ((SimpleViewHolder) holder).bind(theImage);
+        if (Utilidades.visualizacion == Utilidades.LISTA)
+        {
+            ((SimpleViewHolder) holder).bind(0, cursor.getString(mFrom[0]));
+            ((SimpleViewHolder) holder).bind(1, cursor.getString(mFrom[1]));
+            ((SimpleViewHolder) holder).bind(2, cursor.getString(mFrom[2]));
+            ((SimpleViewHolder) holder).bind(3, cursor.getString(mFrom[3]));
+            Bitmap theImage = MainActivity.convertirStringBitmap(cursor.getString(mFrom[4]));
+            ((SimpleViewHolder) holder).bind(theImage);
+        }
+        else
+        {
+            ((SimpleViewHolder) holder).bind(0, cursor.getString(mFrom[0]));
+            ((SimpleViewHolder) holder).bind(1, cursor.getString(mFrom[1]));
+            Bitmap theImage = MainActivity.convertirStringBitmap(cursor.getString(mFrom[4]));
+            ((SimpleViewHolder) holder).bind(theImage);
+        }
+
     }
 
 
@@ -119,4 +140,9 @@ public class MiRecyclerAdapter extends CursorRecyclerAdapterAbs implements View.
         return c;
     }
 
+    public void ClickImagen(OnClickImagen listenerImagen)
+    {
+        if (listenerImagen != null)
+            this.listenerImagen = listenerImagen;
+    }
 }

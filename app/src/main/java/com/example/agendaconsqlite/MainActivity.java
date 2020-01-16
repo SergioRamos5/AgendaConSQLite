@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements onSelectedItemLis
 
         FragmentManager FM = getSupportFragmentManager();
         FragmentTransaction FT  = FM.beginTransaction();
-        Fragment fragment = new FragmentPrincipal(this.datos);
+        Fragment fragment = new FragmentContactos();
         FT.replace(R.id.fragment_container, fragment);
         FT.commit();
     }

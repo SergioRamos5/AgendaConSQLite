@@ -51,8 +51,6 @@ public class AddFragment extends Fragment {
             public void onClick(View v) {
                 sqLiteDatabase = ohCategoria.getWritableDatabase();
 
-
-
                 ContentValues cv = new ContentValues();
                 cv.put("nombre", nombre.getText().toString());
                 cv.put("apellidos",apellido.getText().toString());

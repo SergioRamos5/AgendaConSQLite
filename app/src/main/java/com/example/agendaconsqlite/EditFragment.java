@@ -1,8 +1,11 @@
 package com.example.agendaconsqlite;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,11 +38,15 @@ public class EditFragment extends Fragment {
     private onSelectedItemEditar listenerEdit;
     private ImageView imagen;
     private RadioButton amigos, trabajo, familia;
+    SQLiteDatabase sqLiteDatabase;
+    OHCategoria ohCategoria;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.editar_contacto, container, false);
+
+        ohCategoria = new OHCategoria(getActivity(), "BBDContactos",null,1);
 
 
         fab = v.findViewById(R.id.fab2);
@@ -70,13 +77,19 @@ public class EditFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                datos.setNombre(nombre.getText().toString());
-                datos.setApellidos(apellido.getText().toString());
-                datos.setCorreo(correo.getText().toString());
-                datos.setTelefono(telefono.getText().toString());
-                datos.setAmigos(amigos.isChecked());
-                datos.setFamilia(familia.isChecked());
-                datos.setTrabajo(trabajo.isChecked());
+                sqLiteDatabase = ohCategoria.getWritableDatabase();
+
+                ContentValues cv = new ContentValues();
+                cv.put("nombre", nombre.getText().toString());
+                cv.put("apellidos",apellido.getText().toString());
+                cv.put("telefono",telefono.getText().toString());
+                cv.put("email",correo.getText().toString());
+                String img = MainActivity.ConvertirImagenString(BitmapFactory.decodeResource(getResources(), R.drawable.cabeza));
+                cv.put("imagen", img);
+                cv.put("amigos",amigos.isChecked());
+                cv.put("trabajo",trabajo.isChecked());
+                cv.put("familia",familia.isChecked());
+                sqLiteDatabase.update("Contactos",cv,"id = " + datos.getId(),null);
 
                 listenerEdit.onItemEditSelected(datos);
             }
