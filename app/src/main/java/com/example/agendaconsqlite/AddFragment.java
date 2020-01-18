@@ -23,7 +23,7 @@ public class AddFragment extends Fragment {
     private Datos datos;
     private FloatingActionButton fab;
     EditText nombre, apellido, correo, telefono;
-    onSelectedItemAdd listenerAdd;
+    onSelectedItemEditar listenerAdd;
     RadioButton amigos, trabajo, familia;
     SQLiteDatabase sqLiteDatabase;
     OHCategoria ohCategoria;
@@ -62,7 +62,7 @@ public class AddFragment extends Fragment {
                 cv.put("trabajo",trabajo.isChecked());
                 cv.put("familia",familia.isChecked());
                 sqLiteDatabase.insert("Contactos",null,cv);
-                listenerAdd.onItemAddSelected(datos);
+                listenerAdd.onItemEdSelected(datos);
 
             }
         });
@@ -73,6 +73,6 @@ public class AddFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        listenerAdd = (onSelectedItemAdd) context;
+        listenerAdd = (onSelectedItemEditar) context;
     }
 }

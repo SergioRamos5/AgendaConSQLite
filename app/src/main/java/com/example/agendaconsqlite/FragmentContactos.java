@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
@@ -27,6 +30,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.agendaconfragments.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import static android.app.Activity.RESULT_OK;
+
 public class FragmentContactos extends Fragment {
 
     SQLiteDatabase sqLiteDatabase;
@@ -40,7 +45,11 @@ public class FragmentContactos extends Fragment {
     int [] to;
     Datos datos;
     private onSelectedItemListener listener;
+    private Cursor c;
 
+    public FragmentContactos(Cursor c) {
+        this.c = c;
+    }
 
     @Nullable
     @Override
@@ -56,7 +65,9 @@ public class FragmentContactos extends Fragment {
         if (sqLiteDatabase != null)
         {
             recyclerView = v.findViewById(R.id.recycler);
-            Cursor c = sqLiteDatabase.rawQuery("select * from Contactos", null);
+            if (c == null)
+                c = sqLiteDatabase.rawQuery("select * from Contactos", null);
+
             if (Utilidades.visualizacion == Utilidades.LISTA)
                 mAdapter = new MiRecyclerAdapter(R.layout.holder, c, from, to);
             else
@@ -69,7 +80,7 @@ public class FragmentContactos extends Fragment {
                     pos = recyclerView.getChildAdapterPosition(v);
                     datos = mAdapter.getItem(pos);
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage("¿Eliminar contacto"+ datos.getNombre() +"?")
+                    builder.setMessage("¿Eliminar contacto "+ datos.getNombre() +"?")
                             .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -160,6 +171,8 @@ public class FragmentContactos extends Fragment {
                 @Override
                 public void onClickImagen(View v) {
 
+                    pos = recyclerView.getChildAdapterPosition(v);
+                    datos = mAdapter.getItem(pos);
                     PopupMenu popupMenu = new PopupMenu(getContext(), v);
                     popupMenu.getMenuInflater().inflate(R.menu.menu_contextual, popupMenu.getMenu());
 
@@ -221,6 +234,33 @@ public class FragmentContactos extends Fragment {
     {
         Cursor c = sqLiteDatabase.rawQuery("select * from Contactos", null);
         mAdapter = new MiRecyclerAdapter(R.layout.holder, c, from, to);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if(resultCode == RESULT_OK && requestCode == 2){
+            Uri ruta = data.getData();
+            Bitmap b = bitmapFromUri(ruta);
+            datos.setImagen(Bitmap.createScaledBitmap(b, 100,100, true));
+
+            actualizar();
+        }
+        else if (resultCode == RESULT_OK && requestCode == 1)
+        {
+            datos.setImagen((Bitmap) data.getExtras().get("data"));
+            actualizar();
+        }
+
+    }
+
+    private Bitmap bitmapFromUri(Uri uri) {
+        ImageView imageViewTemp = new ImageView(getContext());
+        imageViewTemp.setImageURI(uri);
+        BitmapDrawable d = (BitmapDrawable) imageViewTemp.getDrawable();
+        return d.getBitmap();
     }
 
     @Override

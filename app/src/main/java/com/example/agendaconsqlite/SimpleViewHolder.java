@@ -31,7 +31,8 @@ public class SimpleViewHolder extends RecyclerView.ViewHolder implements View.On
 
     public void bind(Bitmap dato)
     {
-        imagen.setImageBitmap(dato);
+
+            imagen.setImageBitmap(dato);
     }
 
     public void ClickImagen(OnClickImagen listenerImgane)

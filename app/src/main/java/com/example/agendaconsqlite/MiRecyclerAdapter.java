@@ -7,8 +7,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+
 
 public class MiRecyclerAdapter extends CursorRecyclerAdapterAbs implements View.OnClickListener, View.OnLongClickListener, View.OnTouchListener {
 
@@ -145,4 +148,6 @@ public class MiRecyclerAdapter extends CursorRecyclerAdapterAbs implements View.
         if (listenerImagen != null)
             this.listenerImagen = listenerImagen;
     }
+
+
 }

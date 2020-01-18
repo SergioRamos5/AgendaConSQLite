@@ -91,7 +91,7 @@ public class EditFragment extends Fragment {
                 cv.put("familia",familia.isChecked());
                 sqLiteDatabase.update("Contactos",cv,"id = " + datos.getId(),null);
 
-                listenerEdit.onItemEditSelected(datos);
+                listenerEdit.onItemEdSelected(datos);
             }
         });
 

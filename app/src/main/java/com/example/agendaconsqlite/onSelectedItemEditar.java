@@ -1,5 +1,5 @@
 package com.example.agendaconsqlite;
 
 public interface onSelectedItemEditar {
-    public void onItemEditSelected(Datos datos);
+    public void onItemEdSelected(Datos datos);
 }

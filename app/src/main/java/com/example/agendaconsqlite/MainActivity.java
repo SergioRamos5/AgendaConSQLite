@@ -2,6 +2,7 @@ package com.example.agendaconsqlite;
 
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,7 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements onSelectedItemListener, onSelectedItemEditar, onSelectedItemAdd {
+public class MainActivity extends AppCompatActivity implements onSelectedItemListener, onSelectedItemEditar {
 
     ArrayList<Datos> datos;
     DrawerLayout drawerLayout;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements onSelectedItemLis
     FragmentContactos fragmentContactos;
     SQLiteDatabase sqLiteDatabase;
     OHCategoria ohCategoria;
+    Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,38 +50,30 @@ public class MainActivity extends AppCompatActivity implements onSelectedItemLis
 
         //insertarDatos();
 
-        FragmentManager FM = getSupportFragmentManager();
-        FragmentTransaction FT  = FM.beginTransaction();
-        Fragment fragment = new FragmentContactos();
-        FT.replace(R.id.fragment_container, fragment);
-        FT.commit();
+        crearFragmentPrincipal();
 
-        fragmentContactos = (FragmentContactos) fragment;
         NavigationView navigationView = findViewById(R.id.navigationView);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                sqLiteDatabase = ohCategoria.getReadableDatabase();
 
-                FragmentManager FM = getSupportFragmentManager();
-                FragmentTransaction FT  = FM.beginTransaction();
-                Fragment fragment = new FragmentContactos();
-                FT.replace(R.id.fragment_container, fragment);
-                switch (menuItem.getItemId())
-                {
+                switch (menuItem.getItemId()) {
                     case R.id.Familia:
-                        Toast.makeText(MainActivity.this,"HOLA A TODOS",Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.Trabajo:
-                        Toast.makeText(MainActivity.this,"HOLA A TODOS",Toast.LENGTH_SHORT).show();
+                        cursor = sqLiteDatabase.rawQuery("SELECT * FROM contactos WHERE familia = ?", new String[]{"1"});
                         break;
                     case R.id.Amigos:
-                        Toast.makeText(MainActivity.this,"HOLA A TODOS",Toast.LENGTH_SHORT).show();
+                        cursor = sqLiteDatabase.rawQuery("SELECT * FROM contactos WHERE amigos = ?", new String[]{"1"});
                         break;
-                    case R.id.Todos:
-                        Toast.makeText(MainActivity.this,"HOLA A TODOS",Toast.LENGTH_SHORT).show();
+                    case R.id.Trabajo:
+                        cursor = sqLiteDatabase.rawQuery("SELECT * FROM contactos WHERE trabajo = ?", new String[]{"1"});
+                        break;
+                    default:
+                        cursor = sqLiteDatabase.rawQuery("SELECT * FROM contactos", null);
                         break;
                 }
-                FT.commitNow();
+
+                crearFragmentPrincipal();
                 return true;
             }
         });
@@ -99,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements onSelectedItemLis
     {
         FragmentManager FM = getSupportFragmentManager();
         FragmentTransaction FT  = FM.beginTransaction();
-        Fragment fragment = new FragmentContactos();
+        Fragment fragment = new FragmentContactos(cursor);
         FT.replace(R.id.fragment_container, fragment);
         FT.commit();
     }
@@ -186,23 +180,15 @@ public class MainActivity extends AppCompatActivity implements onSelectedItemLis
     }
 
     @Override
-    public void onItemEditSelected(Datos datos) {
+    public void onItemEdSelected(Datos datos) {
 
         FragmentManager FM = getSupportFragmentManager();
         FragmentTransaction FT  = FM.beginTransaction();
-        Fragment fragment = new FragmentContactos();
+        Fragment fragment = new FragmentContactos(cursor);
         FT.replace(R.id.fragment_container, fragment);
         FT.commit();
     }
 
-    @Override
-    public void onItemAddSelected(Datos datos) {
-        FragmentManager FM = getSupportFragmentManager();
-        FragmentTransaction FT  = FM.beginTransaction();
-        Fragment fragment = new FragmentContactos();
-        FT.replace(R.id.fragment_container, fragment);
-        FT.commit();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
